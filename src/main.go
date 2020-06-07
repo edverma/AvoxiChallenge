@@ -1,40 +1,24 @@
 package main
 
-import "github.com/gin-gonic/gin"
-import "gopkg.in/mgo.v2"
-import "gopkg.in/mgo.v2/bson"
-//import "svc"
+import (
+     "log"
 
-type Whitelist struct {
-     IP []byte `"json:ip" "bson:ip"`
-}
+     "github.com/gin-gonic/gin"
+     "github.com/edverma/AvoxiChallenge/mongo"
+     "github.com/edverma/AvoxiChallenge/api"
+)
 
 func main() {
-     session, err := mgo.Dial("localhost:27017")
+     session, db, err := mongo.CreateConnection()
      if err != nil {
-          panic(err)
+          log.Fatal(err)
+          return
      }
      defer session.Close()
-     db := session.DB("avoxi_challenge")
+
+     mongo.InitData(db)
 
      r := gin.Default()
-     r.GET("/login", func(c *gin.Context) {
-          clientIP := c.ClientIP()
-          whitelist := []Whitelist{}
-          db.C("Whitelist").Find(bson.M{}).All(&whitelist)
-          /*
-          if ( ! svc.isAuthorized( clientIP, whitelist ) ) {
-               c.JSON(403, gin.H{
-                    "login failure": "client ip address is unauthorized",
-               })
-          }
-          */
-          if whitelist != nil && clientIP != "" {
-               c.JSON(200, gin.H{
-                    "clientIP": clientIP,
-                    "whitelist": whitelist,
-               })
-          }
-     })
-     r.Run() // listen and serve on 0.0.0.0:8080 (for windows "localhost:8080")
+     api.InitRoutes(r, db)
+     r.Run() //localhost:8080
 }

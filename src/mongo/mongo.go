@@ -1,12 +1,39 @@
 package mongo
 
-import "gopkg.in/mgo.v2"
+import (
+     "log"
+     "fmt"
 
-func createConnection() *mgo.Session {
+     "gopkg.in/mgo.v2"
+     "gopkg.in/mgo.v2/bson"
+     "github.com/edverma/AvoxiChallenge/models"
+)
+
+func CreateConnection() (*mgo.Session, *mgo.Database, error) {
 	session, err := mgo.Dial("localhost:27017")
+     db := session.DB("avoxi_challenge")
+     return session, db, err
+}
+
+func InitData(db *mgo.Database) {
+     sample := models.Whitelist{}
+     err := db.C("Whitelist").Find(bson.M{}).One(&sample)
      if err != nil {
-          panic(err)
+          log.Print(err)
      }
-     return session
+     fmt.Println("sample: ", sample)
+     if sample.IsoCode == "" {
+          fmt.Println("here")
+          err := db.C("Whitelist").Insert(
+               bson.M{"iso_code": "US"},
+               bson.M{"iso_code": "IQ"},
+               bson.M{"iso_code": "WS"},
+               bson.M{"iso_code": "BW"},
+               bson.M{"iso_code": "AX"},
+          )
+          if err != nil {
+               log.Fatal(err)
+          }
+     }
 }
 
