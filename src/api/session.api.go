@@ -12,8 +12,9 @@ import (
 
 func loginAPI(c *gin.Context, db *mgo.Database) {
 	sessionSvc := services.NewSessionService()
-	//clientIP := net.ParseIP( c.ClientIP() )
-	clientIP  := net.ParseIP( "71.204.91.63" )
+	clientIP := net.ParseIP( c.ClientIP() )
+	/* USE THE BELOW LINE INSTEAD OF THE ABOVE LINE FOR TESTING */
+	// clientIP  := net.ParseIP( "71.204.91.63" )
 	whitelist := []models.Whitelist{}
 
 	err := db.C("Whitelist").Find(nil).All(&whitelist)
