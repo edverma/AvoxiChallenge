@@ -1,7 +1,6 @@
 package services
 
 import (
-	"fmt"
 	"log"
 
 	geolite2 "github.com/oschwald/geoip2-golang"
@@ -28,11 +27,6 @@ func (session *Session) IsAuthorized (ip []byte, whitelist []models.Whitelist) b
 		log.Fatal(err)
 	}
 	isoCode := record.Country.IsoCode
-
-	fmt.Println("whitelist: ", whitelist)
-	fmt.Println("record: ", record)
-	fmt.Println("isoCode: ", isoCode)
-	fmt.Println("ip: ", ip)
 
 	for _, item := range whitelist {
 		if item.IsoCode == isoCode {

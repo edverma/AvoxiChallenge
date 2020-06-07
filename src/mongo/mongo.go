@@ -2,7 +2,6 @@ package mongo
 
 import (
      "log"
-     "fmt"
 
      "gopkg.in/mgo.v2"
      "gopkg.in/mgo.v2/bson"
@@ -21,9 +20,7 @@ func InitData(db *mgo.Database) {
      if err != nil {
           log.Print(err)
      }
-     fmt.Println("sample: ", sample)
      if sample.IsoCode == "" {
-          fmt.Println("here")
           err := db.C("Whitelist").Insert(
                bson.M{"iso_code": "US"},
                bson.M{"iso_code": "IQ"},
